@@ -1,0 +1,3 @@
+From the Activity page, one can view currently executing commands and Jobs or browse execution history. The execution history can be filtered based on user selected parameters. Once the filter has been set, the matching history is displayed. The current filter settings also configure an RSS link, found in the top right of the page (see Rundeck Administration to enable RSS).
+
+See [Activity](https://rundeck.org/docs/manual/activity.html)

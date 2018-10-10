@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+#/ usage: build-tour --source-dir <> [--name <> [--key <>]]
+
+set -eu
+
+options:check()
+{
+    if (( "$1" < 2 ))
+    then 
+    	printf >&2 -- "option requires argument: %s\n" "${1:-}"
+    	return 1
+    else 
+    	return 0
+    fi
+}
+
+options:parse() 
+{
+    while (( "$#" > 0 ))
+    do
+        OPT="$1"
+        case "$OPT" in
+            --source-dir) options:check $# "$1";  SOURCE_DIR=$2 ; shift 2 ;;
+            --name) options:check $# "$1"; NAME=$2 ; shift 2 ;;
+            --key)  options:check $# "$1"; KEY=$2  ; shift 2 ;;
+            # help option
+            -\?|--help)
+                grep '^#/ usage:' <"$0" | cut -c4-
+                exit 2
+                ;;
+            # unrecognized arguments
+            *)
+              unrecognized_args+=("$OPT")
+              shift
+              ;;
+        esac
+    done
+
+    # Check required options.
+    [[ -z "${SOURCE_DIR:-}" ]] && { printf >&2 -- "--source-dir is required\n"; return 2; }
+    [[ -d "$SOURCE_DIR" ]]     || { printf >&2 -- "source-dir directory not found\n"; return 2; }
+
+    # Set defaultable options.
+    [[ -z "${NAME:-}" ]] && NAME=$(basename "$SOURCE_DIR")
+    [[ -n "${KEY:-}" ]]  || KEY="$NAME"
+}
+
+
+json:stringify()
+{
+   jq -sR .
+}
+json:prettify() {
+	jq .
+}
+step:metadata()
+{
+	local -r key=$1 file=$2
+	local value
+	read -r _ _ value < <(grep "^#/ $key:" <"$file")
+	printf "%s" "$value"
+}
+step:title()
+{
+	local -r file=$1
+	local title
+	title=$(step:metadata title "$file")
+	#printf "%s" "${title:-$(basename "${file#*-}" .md)}"
+	[[ -z "${title:-}" ]] && title=$(basename "${file#*-}" .md)
+	printf "%s" "$title"
+}
+step:content()
+{
+	grep -v '#/' <"$1" | json:stringify
+}
+step:generate()
+{
+	local -r stepfile=$1
+	local -r title=$(step:title "$stepfile")
+	local -r content=$(step:content "$stepfile")
+	cat <<EOF
+ {
+    "title":"$title",
+    "content":$content
+  }
+EOF
+}
+
+manifest:create() {
+	local -r name=$1 key=$2 stepdir=$3
+	local -ra steps=("$stepdir"/*)
+	local -i count=0
+	cat <<EOF
+{
+  "name": "$name",
+  "key": "$key",
+  "steps": [
+	$(for step in "${steps[@]}"; do
+		step:generate "$step"
+		(( count++ ))		
+		(( count < ${#steps[*]} )) && printf ","
+	done)
+  ]
+}
+EOF
+}
+
+
+options:parse "$@"
+manifest:create "$NAME" "$KEY" "$SOURCE_DIR" |  json:prettify
+
+
+exit $?

@@ -1,0 +1,18 @@
+{
+  "name": "Demo Tour",
+  "key": "demo-tour",
+  "steps": [{
+      "title": "Step One",
+      "content": "<p>Brace yourselves gentlemen. According to the gas chromatograph, the secret ingredient is… Love!? Who's been screwing with this thing? Old people don't need companionship. They need to be isolated and studied so it can be determined what nutrients they have that might be extracted for our personal use.</p> <p > < strong > Last night 's \"Itchy and Scratchy Show \" was, without a doubt, the worst episode *ever.</strong> <em>* Rest assured, I was on the Internet within minutes, registering my disgust throughout the world.</em> I'm normally not a praying man, but if you 're up there, please save me, Superman.</p> <h2 > I hope I didn 't brain my damage.</h2> <p > When I held that gun in my hand, I felt a surge of power… like God must feel when he 's holding a gun. You don't win friends with salad.What good is moneyif it can 't inspire terror in your fellow man?</p>",
+      "nextStepIndicator": "nav-jobs-link"
+    },
+    {
+      "title": "Step Two",
+      "content": "<p><a href=\"../../project/anvilsonline/jobs\">I'll be back.</a> You can't keep the Democrats out of the White House forever, and when they get in, I'm back on the streets, with all my criminal buddies. Oh, a *sarcasm* detector. Oh, that's a *really* useful invention!</p>"
+    },
+    {
+      "title": "Step Three",
+      "content": "<p>This is the greatest case of false advertising I've seen since I sued the movie \"The Never Ending Story.\" Oh, loneliness and cheeseburgers are a dangerous mix. And now, in the spirit of the season: start shopping. And for every dollar of Krusty merchandise you buy, I will be nice to a sick kid. For legal purposes, sick kids may include hookers with a cold.</p>"
+    }
+  ]
+}
