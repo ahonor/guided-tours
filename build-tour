@@ -55,17 +55,16 @@ json:prettify() {
 }
 step:metadata()
 {
-	local -r key=$1 file=$2
+	local -r key=${1?key} file=${2?file}
 	local value
 	read -r _ _ value < <(grep "^#/ $key:" <"$file")
 	printf "%s" "$value"
 }
 step:title()
 {
-	local -r file=$1
+	local -r file=${1?file}
 	local title
 	title=$(step:metadata title "$file")
-	#printf "%s" "${title:-$(basename "${file#*-}" .md)}"
 	[[ -z "${title:-}" ]] && title=$(basename "${file#*-}" .md)
 	printf "%s" "$title"
 }
@@ -75,7 +74,7 @@ step:content()
 }
 step:generate()
 {
-	local -r stepfile=$1
+	local -r stepfile=${1?file}
 	local -r title=$(step:title "$stepfile")
 	local -r content=$(step:content "$stepfile")
 	cat <<EOF
@@ -87,8 +86,8 @@ EOF
 }
 
 manifest:create() {
-	local -r name=$1 key=$2 stepdir=$3
-	local -ra steps=("$stepdir"/*)
+	local -r name=${1?name} key=${2?key} tourdir=${3?dir}
+	local -ra steps=("$tourdir"/*)
 	local -i count=0
 	cat <<EOF
 {
@@ -107,7 +106,8 @@ EOF
 
 
 options:parse "$@"
-manifest:create "$NAME" "$KEY" "$SOURCE_DIR" |  json:prettify
-
+manifest:create "$NAME" "$KEY" "$SOURCE_DIR" |
+json:prettify
 
 exit $?
+# Done.
