@@ -29,7 +29,9 @@ The `build-tour` command generates the required JSON data structure.
   "steps": [
     {
       "title": "My first topic",
-      "content": "Some text"
+      "content": "Some text",
+      "nextStepUrl": "menu/home",
+      "stepIndicator": "tag-id"
     },
     {
       "title": "My second topic",
@@ -66,6 +68,11 @@ To have better control over a step's topic name rather than rely on the markdown
 #/ title: My Step Topic
 -->
 ```
+
+Other literal doc tags include:
+
+* `stepIndicator`: The element ID you want the indicate to the user. You can use the browser dev tool to inspect the page tags.
+* `nextStepUrl`: The app page to change to when the user presses the "Next" button. Use relative links.
 
 ## Configuration
 
