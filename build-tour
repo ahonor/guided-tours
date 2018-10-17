@@ -68,6 +68,20 @@ step:title()
 	[[ -z "${title:-}" ]] && title=$(basename "${file#*-}" .md)
 	printf "%s" "$title"
 }
+step:stepIndicator()
+{
+  local -r file=${1?file}
+  local stepIndicator
+  stepIndicator=$(step:metadata stepIndicator "$file")
+  printf "%s" "${stepIndicator:-}"
+}
+step:nextStepUrl()
+{
+  local -r file=${1?file}
+  local nextStepUrl
+  nextStepUrl=$(step:metadata nextStepUrl "$file")
+  printf "%s" "${nextStepUrl:-}"
+}
 step:content()
 {
 	grep -v '#/' <"$1" | json:stringify
@@ -77,12 +91,18 @@ step:generate()
 	local -r stepfile=${1?file}
 	local -r title=$(step:title "$stepfile")
 	local -r content=$(step:content "$stepfile")
-	cat <<EOF
- {
-    "title":"$title",
-    "content":$content
+  local -r stepIndicator=$(step:stepIndicator "$stepfile")
+  local -r nextStepUrl=$(step:nextStepUrl "$stepfile")
+  printf '  {\n'
+  printf  '  "title":"%s",\n' "$title"
+  printf  '  "content":%s\n' "$content"
+  [[ -n "${stepIndicator:-}" ]] && {
+    printf  ',  "stepIndicator":"%s"\n' "$stepIndicator"
   }
-EOF
+  [[ -n "${nextStepUrl:-}" ]] && {
+    printf  ',  "nextStepUrl":"%s"\n' "$nextStepUrl"
+  }  
+  printf '  }\n'
 }
 
 manifest:create() {
@@ -106,8 +126,7 @@ EOF
 
 
 options:parse "$@"
-manifest:create "$NAME" "$KEY" "$SOURCE_DIR" |
-json:prettify
+manifest:create "$NAME" "$KEY" "$SOURCE_DIR" | json:prettify
 
 exit $?
 # Done.
